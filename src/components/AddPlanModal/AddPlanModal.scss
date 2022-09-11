@@ -1,0 +1,17 @@
+@import "styles/variables";
+
+.form-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  > *:not(button) {
+    width: 100% !important;
+  }
+  button {
+    width: 20px;
+  }
+  label {
+    margin-top: 10px;
+    color: $main-text-color;
+  }
+}

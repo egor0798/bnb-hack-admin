@@ -1,20 +1,9 @@
 import { providers } from 'ethers';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
+import { connectContractsSigner } from './contracts';
 
 const SIGNATURE_KEY = 'signature';
-const SIGNATURE_MESSAGE = 'SIGNATURE_MESSAGE';
-
-// export async function connectContractsSigner(signer: providers.JsonRpcSigner) {
-//   for (const x of Object.keys(contracts)) {
-//     try {
-//       const key = x as keyof typeof contracts;
-//       contracts[key] = contracts[key].connect(signer);
-//     } catch (error) {
-//       console.error(`Contract ${x} signer provider error. `, error);
-//     }
-//   }
-// }
-
+const SIGNATURE_MESSAGE = 'Start managing your subscriptions with blockchain';
 
 const chainId = 97;
 
@@ -31,7 +20,7 @@ const connecter = new WalletConnectConnector({
 const initEthers = async (provider: providers.ExternalProvider | providers.JsonRpcFetchFunc) => {
   const ethersProvider = new providers.Web3Provider(provider);
   const signer = ethersProvider.getSigner();
-  // await connectContractsSigner(signer);
+  await connectContractsSigner(signer);
 
   return { ethersProvider, signer };
 };
@@ -56,28 +45,20 @@ export const logout = async () => {
   connecter.deactivate();
 };
 
-export const getAccount = async () => {
-  try {
-    const acc = await connecter.getAccount();
-    return acc;
-  } catch (e) {
-    return null;
-  }
-}
-
-
 export const connectWallet = async () => {
-  const signature = localStorage.getItem(SIGNATURE_KEY);
-  if (!signature) {
-    return ;
-  }
   await connecter.activate();
+  let signature = localStorage.getItem(SIGNATURE_KEY);
+  const provider = await connecter.getProvider();
+
+  if (!signature) {
+    const { signer } = await initEthers(provider);
+    signature = await signer.signMessage(SIGNATURE_MESSAGE);
+    localStorage.setItem(SIGNATURE_KEY, signature);
+  }
+
   const account = await connecter.getAccount();
 
   if (account && signature) {
-    const provider = await connecter.getProvider();
-    await initEthers(provider);
-
     return { account: account, signature: signature };
   }
 }

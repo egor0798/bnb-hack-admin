@@ -1,35 +1,30 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import './App.scss';
 import { SubscriptionsList } from '../SubscriptionsList/SubscriptionsList';
-import { Button } from '@mui/material';
-import { connectWallet, getAccount, login, logout } from '../../utils/connect-wallet';
+import { connectWallet, login, logout } from '../../utils/connect-wallet';
+import { AccountContext } from '../../store/AccountProvider';
+import { Button } from 'antd';
+import "antd/dist/antd.dark.css";
 
 function App() {
+  const { account, setAccount } = useContext(AccountContext);
 
   useEffect(() => {
-    connectWallet().then(() => {
-      getAccount()?.then(r => console.log(r));
-    });
-  }, []);
-
-
-  const handleLoginButtonClick = () => {
-    login().then(res => console.log(res));
-  }
+    connectWallet().then(r => setAccount(r?.account || null));
+  });
 
   return (
     <div className="app">
       <header className="app-header">
         <h1>Subscription manager admin</h1>
         <div className="app-header-user">
+          {account && <Button type='primary' danger onClick={logout}>Logout</Button>}
           <h3>Account:</h3>
-          <h3>123123123</h3>
+          <h3>{account || '--'}</h3>
         </div>
       </header>
       <div className="content">
-        <Button onClick={handleLoginButtonClick}>Connect wallet</Button>
-        <Button onClick={logout}>logout</Button>
-        <SubscriptionsList />
+        {account && <SubscriptionsList />}
       </div>
     </div>
   );
