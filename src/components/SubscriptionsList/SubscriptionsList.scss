@@ -1,0 +1,41 @@
+@import "styles/variables";
+
+.subs-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+  gap: 40px;
+  padding: 40px;
+
+  &-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    color: $main-text-color;
+  }
+
+  &-item {
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+    flex-direction: row;
+    gap: 40px;
+    align-items: center;
+    color: $main-text-color;
+    background-color: $header-bg;
+    border: 2px solid $accent-color;
+    border-radius: 12px;
+    padding: 20px;
+    .item-data {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .delete-button {
+      margin-left: auto;
+    }
+  }
+}
